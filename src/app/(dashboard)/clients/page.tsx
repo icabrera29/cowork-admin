@@ -1,3 +1,5 @@
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { Search, UserPlus, Filter } from "lucide-react";
 import { getClients } from "./actions";
