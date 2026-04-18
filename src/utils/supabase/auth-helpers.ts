@@ -1,4 +1,4 @@
-import { createSupabaseClient } from "./server";
+import { createClient } from "./server";
 import { redirect } from "next/navigation";
 
 export type UserRole = 'admin' | 'employee' | 'client';
@@ -8,7 +8,7 @@ export type UserRole = 'admin' | 'employee' | 'client';
  * If not, it redirects to the login or throws an error for Server Actions.
  */
 export async function requireRole(allowedRoles: UserRole[]) {
-  const supabase = await createSupabaseClient();
+  const supabase = await createClient();
   
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   
