@@ -23,7 +23,7 @@ export default function LoginPage() {
     if (result?.error) {
       setError(result.error);
       setLoading(false);
-    } else if (result?.success) {
+    } else if (result && 'success' in result) {
       setMessage(result.success);
       setLoading(false);
       if (mode === "signup") {
