@@ -1,0 +1,88 @@
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import Link from "next/link";
+import { Search, UserPlus, Filter, MoreVertical } from "lucide-react";
+
+const clients = [
+  { id: 1, name: "Lucas Beltrán", company: "Skyline Tech", email: "lucas@skyline.com", plan: "Premium Desk", status: "Activo" },
+  { id: 2, name: "Ana Poveda", company: "Freelance", email: "ana.p@gmail.com", plan: "Flex Pass", status: "Activo" },
+  { id: 3, name: "Roberto Gómez", company: "Solaris SA", email: "rg@solaris.es", plan: "Private Office", status: "Inactivo" },
+  { id: 4, name: "Marta Sánchez", company: "Creative Studio", email: "marta@creative.io", plan: "Premium Desk", status: "Activo" },
+];
+
+export default function ClientsPage() {
+  return (
+    <div className="p-10 max-w-7xl mx-auto space-y-8">
+      <header className="flex items-end justify-between">
+        <div>
+          <h2 className="text-4xl font-bold tracking-tight text-white mb-2">Clientes</h2>
+          <p className="text-nordic-on-bg/60">Gestiona la base de datos de miembros y empresas.</p>
+        </div>
+        <Link href="/clients/new">
+          <Button>
+            <UserPlus size={18} className="mr-2" />
+            Nuevo Cliente
+          </Button>
+        </Link>
+      </header>
+
+      <Card variant="low" className="overflow-hidden p-0 border border-nordic-outline-variant/10">
+        <div className="p-4 bg-nordic-surface-highest/30 flex items-center justify-between border-b border-nordic-outline-variant/10">
+          <div className="relative w-96">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-nordic-on-bg/40" size={16} />
+            <input 
+              type="text" 
+              placeholder="Buscar por nombre, empresa o email..." 
+              className="w-full bg-nordic-bg/50 text-sm pl-10 pr-4 py-2 rounded-lg border border-nordic-outline-variant/10 focus:outline-none focus:border-nordic-primary/40 transition-all"
+            />
+          </div>
+          <Button variant="secondary" size="sm">
+            <Filter size={14} className="mr-2" />
+            Filtros
+          </Button>
+        </div>
+
+        <table className="w-full text-left">
+          <thead>
+            <tr className="text-[10px] uppercase tracking-widest text-nordic-on-bg/40 border-b border-nordic-outline-variant/10">
+              <th className="px-6 py-4 font-bold">Nombre</th>
+              <th className="px-6 py-4 font-bold">Empresa</th>
+              <th className="px-6 py-4 font-bold">Estado</th>
+              <th className="px-6 py-4 font-bold text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-nordic-outline-variant/5">
+            {clients.map((client) => (
+              <tr key={client.id} className="group hover:bg-nordic-surface-highest/20 transition-colors">
+                <td className="px-6 py-4">
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-white">{client.name}</span>
+                    <span className="text-xs text-nordic-on-bg/40">{client.email}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex flex-col">
+                    <span className="text-sm text-nordic-on-bg/80">{client.company}</span>
+                    <span className="text-[10px] text-nordic-primary/60">{client.plan}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                    client.status === "Activo" ? "bg-green-400/10 text-green-400" : "bg-nordic-outline-variant/20 text-nordic-on-bg/40"
+                  }`}>
+                    {client.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <button className="text-nordic-on-bg/40 hover:text-white transition-colors">
+                    <MoreVertical size={18} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
+}

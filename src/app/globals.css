@@ -1,26 +1,55 @@
 @import "tailwindcss";
 
+@theme {
+  --color-nordic-bg: #0b1326;
+  --color-nordic-surface-low: #101c36;
+  --color-nordic-surface-high: #152547;
+  --color-nordic-surface-highest: #1e335e;
+  
+  --color-nordic-on-bg: #e2e8f0;
+  
+  --color-nordic-primary: #adc6ff;
+  --color-nordic-outline-variant: #425173;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  background-color: var(--color-nordic-bg);
+  color: var(--color-nordic-on-bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(21, 37, 71, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nordic-gradient {
+  background: linear-gradient(135deg, var(--color-nordic-primary) 0%, #ffffff 100%);
+}
+
+.shadow-nordic-ambient {
+  box-shadow: 0 0 40px rgba(17, 30, 58, 0.5);
+}
+
+/* Custom Scrollbar for heavy content areas */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-nordic-surface-highest);
+  border-radius: 20px;
 }
