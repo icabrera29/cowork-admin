@@ -21,7 +21,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-nordic-bg/40 backdrop-blur-[2px]" />
 
       {/* Login Card */}
-      <div className="glass relative w-full max-w-md p-10 rounded-[2rem] border border-white/10 shadow-2xl animate-in fade-in zoom-in duration-700">
+      <div className="glass relative w-full max-w-md p-6 md:p-10 mx-4 md:mx-0 rounded-3xl md:rounded-[2rem] border border-white/10 shadow-2xl animate-in fade-in zoom-in duration-700">
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold tracking-tighter text-white italic mb-2">NORDIC</h1>
           <p className="text-sm text-white/60 tracking-wider">GESTIÓN DE CO-WORK</p>

@@ -59,16 +59,16 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="p-10 max-w-7xl mx-auto space-y-8">
-      <header className="flex items-end justify-between">
-        <div className="flex items-end gap-8">
+    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
+      <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6 md:gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-8 w-full md:w-auto">
           <div>
-            <h2 className="text-4xl font-bold tracking-tight text-white mb-2">Calendario</h2>
-            <p className="text-nordic-on-bg/60">Disponibilidad de salas y eventos programados.</p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">Calendario</h2>
+            <p className="text-sm md:text-base text-nordic-on-bg/60">Disponibilidad de salas y eventos programados.</p>
           </div>
           
           {/* View Toggle */}
-          <div className="flex bg-nordic-surface-high p-1 rounded-xl border border-nordic-outline-variant/10 self-end mb-1">
+          <div className="flex bg-nordic-surface-high p-1 rounded-xl border border-nordic-outline-variant/10 self-start sm:self-end sm:mb-1">
             <button 
               onClick={() => setViewMode("month")}
               className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
@@ -88,15 +88,15 @@ export default function CalendarPage() {
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="flex items-center bg-nordic-surface-high rounded-xl p-1 border border-nordic-outline-variant/10">
+        <div className="flex flex-col xl:flex-row items-stretch xl:items-center gap-4 w-full md:w-auto">
+          <div className="flex items-center bg-nordic-surface-high rounded-xl p-1 border border-nordic-outline-variant/10 justify-between xl:justify-start">
             <button className="p-2 hover:bg-nordic-surface-highest rounded-lg transition-colors"><ChevronLeft size={18} /></button>
             <span className="px-4 text-sm font-bold uppercase tracking-widest text-white">
               {viewMode === "month" ? "Mayo 2026" : "11 — 17 Mayo"}
             </span>
             <button className="p-2 hover:bg-nordic-surface-highest rounded-lg transition-colors"><ChevronRight size={18} /></button>
           </div>
-          <Button>
+          <Button className="w-full xl:w-auto justify-center">
             <Plus size={18} className="mr-2" />
             Nuevo Evento
           </Button>
@@ -120,18 +120,19 @@ export default function CalendarPage() {
         </select>
       </div>
 
-      <Card variant="low" className="p-0 overflow-hidden border border-nordic-outline-variant/10 bg-black/10">
+      <Card variant="low" className="p-0 border border-nordic-outline-variant/10 bg-black/10 overflow-hidden">
         {viewMode === "month" ? (
           /* MONTH VIEW */
-          <>
-            <div className="grid grid-cols-7 border-b border-nordic-outline-variant/10">
-              {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((day) => (
-                <div key={day} className="py-4 text-center text-[10px] font-bold uppercase tracking-widest text-nordic-on-bg/40">
-                  {day}
-                </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-7 auto-rows-[140px]">
+          <div className="overflow-x-auto custom-scrollbar">
+            <div className="min-w-[800px]">
+              <div className="grid grid-cols-7 border-b border-nordic-outline-variant/10">
+                {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((day) => (
+                  <div key={day} className="py-4 text-center text-[10px] font-bold uppercase tracking-widest text-nordic-on-bg/40">
+                    {day}
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-7 auto-rows-[140px]">
               {daysInMonth.map((day, i) => {
                 const hasEvents = filteredEvents
                   .filter(e => e.day === day)
@@ -177,25 +178,27 @@ export default function CalendarPage() {
                 );
               })}
             </div>
-          </>
+          </div>
         ) : (
           /* WEEKLY VIEW (Hourly Grid) */
           <div className="flex flex-col h-[700px] overflow-hidden">
-            <div className="flex border-b border-nordic-outline-variant/20 bg-nordic-surface-low">
-              <div className="w-20 border-r border-nordic-outline-variant/10" />
-              <div className="flex-1 grid grid-cols-7">
-                {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((dayName, idx) => (
-                  <div key={dayName} className="py-4 text-center border-r border-nordic-outline-variant/5 last:border-r-0">
-                    <p className="text-[10px] uppercase tracking-widest text-nordic-on-bg/40 font-bold mb-1">{dayName}</p>
-                    <p className={`text-xl font-bold ${weekDays[idx] === 15 ? 'text-nordic-primary' : 'text-white'}`}>
-                      {weekDays[idx]}
-                    </p>
+            <div className="overflow-x-auto custom-scrollbar flex-1 relative">
+              <div className="min-w-[800px] h-full flex flex-col">
+                <div className="flex border-b border-nordic-outline-variant/20 bg-nordic-surface-low sticky top-0 z-30 shadow-sm backdrop-blur-xl">
+                  <div className="w-20 border-r border-nordic-outline-variant/10 shrink-0" />
+                  <div className="flex-1 grid grid-cols-7">
+                    {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((dayName, idx) => (
+                      <div key={dayName} className="py-4 text-center border-r border-nordic-outline-variant/5 last:border-r-0">
+                        <p className="text-[10px] uppercase tracking-widest text-nordic-on-bg/40 font-bold mb-1">{dayName}</p>
+                        <p className={`text-xl font-bold ${weekDays[idx] === 15 ? 'text-nordic-primary' : 'text-white'}`}>
+                          {weekDays[idx]}
+                        </p>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar relative px-1">
+                <div className="flex-1 px-1 relative">
               <div className="flex min-h-[1200px]">
                 {/* Time Indicators */}
                 <div className="w-20 border-r-2 border-nordic-primary/20 sticky left-0 bg-nordic-surface-low/95 backdrop-blur-xl z-10 shadow-xl shadow-black/20">
@@ -249,6 +252,7 @@ export default function CalendarPage() {
                   })}
                 </div>
               </div>
+            </div>
             </div>
           </div>
         )}

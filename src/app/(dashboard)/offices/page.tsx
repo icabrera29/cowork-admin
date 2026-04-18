@@ -11,13 +11,13 @@ const offices = [
 
 export default function OfficesPage() {
   return (
-    <div className="p-10 max-w-7xl mx-auto space-y-8">
-      <header className="flex items-end justify-between">
+    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
+      <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-4xl font-bold tracking-tight text-white mb-2">Oficinas</h2>
-          <p className="text-nordic-on-bg/60">Gestiona los espacios físicos y su disponibilidad.</p>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">Oficinas</h2>
+          <p className="text-sm md:text-base text-nordic-on-bg/60">Gestiona los espacios físicos y su disponibilidad.</p>
         </div>
-        <Button>
+        <Button className="w-full md:w-auto">
           <Plus size={18} className="mr-2" />
           Nuevo Espacio
         </Button>

@@ -11,11 +11,11 @@ const logs = [
 
 export default function LogsPage() {
   return (
-    <div className="p-10 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
       <header className="flex items-end justify-between">
         <div>
-          <h2 className="text-4xl font-bold tracking-tight text-white mb-2">Logs del Sistema</h2>
-          <p className="text-nordic-on-bg/60">Auditoría técnica y registros de actividad.</p>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">Logs del Sistema</h2>
+          <p className="text-sm md:text-base text-nordic-on-bg/60">Auditoría técnica y registros de actividad.</p>
         </div>
       </header>
 
@@ -32,11 +32,12 @@ export default function LogsPage() {
           </div>
         </div>
 
-        <div className="divide-y divide-nordic-outline-variant/5 font-mono text-xs">
+        <div className="overflow-x-auto custom-scrollbar">
+        <div className="divide-y divide-nordic-outline-variant/5 font-mono text-xs min-w-[600px]">
           {logs.map((log) => (
-            <div key={log.id} className="flex items-center gap-6 px-6 py-4 hover:bg-white/5 transition-colors group">
-              <span className="text-nordic-on-bg/20 w-24">{log.time}</span>
-              <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold w-20 text-center ${
+            <div key={log.id} className="flex items-center gap-4 md:gap-6 px-4 md:px-6 py-4 hover:bg-white/5 transition-colors group">
+              <span className="text-nordic-on-bg/20 w-20 md:w-24 shrink-0">{log.time}</span>
+              <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold w-16 md:w-20 text-center shrink-0 ${
                 log.type === "auth" ? "bg-nordic-primary/10 text-nordic-primary" :
                 log.type === "security" ? "bg-red-400/10 text-red-400" :
                 "bg-nordic-on-bg/10 text-nordic-on-bg/60"
@@ -44,9 +45,10 @@ export default function LogsPage() {
                 {log.type}
               </span>
               <span className="flex-1 text-nordic-on-bg/80 group-hover:text-white transition-colors">{log.message}</span>
-              <span className="text-nordic-on-bg/40 text-[10px]">{log.user}</span>
+              <span className="text-nordic-on-bg/40 text-[10px] shrink-0">{log.user}</span>
             </div>
           ))}
+        </div>
         </div>
       </Card>
     </div>

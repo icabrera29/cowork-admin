@@ -12,14 +12,14 @@ const clients = [
 
 export default function ClientsPage() {
   return (
-    <div className="p-10 max-w-7xl mx-auto space-y-8">
-      <header className="flex items-end justify-between">
+    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
+      <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
         <div>
-          <h2 className="text-4xl font-bold tracking-tight text-white mb-2">Clientes</h2>
-          <p className="text-nordic-on-bg/60">Gestiona la base de datos de miembros y empresas.</p>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">Clientes</h2>
+          <p className="text-sm md:text-base text-nordic-on-bg/60">Gestiona la base de datos de miembros y empresas.</p>
         </div>
-        <Link href="/clients/new">
-          <Button>
+        <Link href="/clients/new" className="w-full md:w-auto">
+          <Button className="w-full">
             <UserPlus size={18} className="mr-2" />
             Nuevo Cliente
           </Button>
@@ -27,8 +27,8 @@ export default function ClientsPage() {
       </header>
 
       <Card variant="low" className="overflow-hidden p-0 border border-nordic-outline-variant/10">
-        <div className="p-4 bg-nordic-surface-highest/30 flex items-center justify-between border-b border-nordic-outline-variant/10">
-          <div className="relative w-96">
+        <div className="p-4 bg-nordic-surface-highest/30 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-nordic-outline-variant/10">
+          <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-nordic-on-bg/40" size={16} />
             <input 
               type="text" 
@@ -36,13 +36,14 @@ export default function ClientsPage() {
               className="w-full bg-nordic-bg/50 text-sm pl-10 pr-4 py-2 rounded-lg border border-nordic-outline-variant/10 focus:outline-none focus:border-nordic-primary/40 transition-all"
             />
           </div>
-          <Button variant="secondary" size="sm">
+          <Button variant="secondary" size="sm" className="w-full md:w-auto justify-center">
             <Filter size={14} className="mr-2" />
             Filtros
           </Button>
         </div>
 
-        <table className="w-full text-left">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left min-w-[600px]">
           <thead>
             <tr className="text-[10px] uppercase tracking-widest text-nordic-on-bg/40 border-b border-nordic-outline-variant/10">
               <th className="px-6 py-4 font-bold">Nombre</th>
@@ -82,6 +83,7 @@ export default function ClientsPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </Card>
     </div>
   );
