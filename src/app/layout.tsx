@@ -8,8 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Nordic Co-Work Manager",
-  description: "High-end editorial co-work management system",
+  title: "Nordic Co-Work Manager | Premium Workspace Management",
+  description: "Sistema de gestión para espacios de co-work con estética minimalista nórdica. Control de oficinas, alquileres y clientes.",
+  keywords: ["coworking", "management", "nordic design", "workspace", "admin dashboard"],
 };
 
 export default function RootLayout({
