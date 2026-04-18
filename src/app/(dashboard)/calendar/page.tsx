@@ -255,7 +255,8 @@ export default function CalendarPage() {
             </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
       </Card>
     </div>
   );
