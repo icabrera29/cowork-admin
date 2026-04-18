@@ -1,13 +1,15 @@
 import { createClient } from "./server";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 
 export type UserRole = 'admin' | 'employee' | 'client';
 
 /**
  * Validates if the current user has the required roles.
  * If not, it redirects to the login or throws an error for Server Actions.
+ * Wrapped in cache to avoid redundant fetches in the same request.
  */
-export async function requireRole(allowedRoles: UserRole[]) {
+export const requireRole = cache(async function(allowedRoles: UserRole[]) {
   const supabase = await createClient();
   
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -29,7 +31,7 @@ export async function requireRole(allowedRoles: UserRole[]) {
   }
 
   return { user, profile };
-}
+});
 
 /**
  * Silent version for checks within Server Actions that might need to return specific error objects
