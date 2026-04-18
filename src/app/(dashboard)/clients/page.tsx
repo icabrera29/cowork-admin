@@ -1,16 +1,13 @@
-import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
 import Link from "next/link";
-import { Search, UserPlus, Filter, MoreVertical } from "lucide-react";
+import { Search, UserPlus, Filter } from "lucide-react";
+import { getClients } from "./actions";
+import ClientActions from "./_components/ClientActions";
+import { requireRole } from "@/utils/supabase/auth-helpers";
 
-const clients = [
-  { id: 1, name: "Lucas Beltrán", company: "Skyline Tech", email: "lucas@skyline.com", plan: "Premium Desk", status: "Activo" },
-  { id: 2, name: "Ana Poveda", company: "Freelance", email: "ana.p@gmail.com", plan: "Flex Pass", status: "Activo" },
-  { id: 3, name: "Roberto Gómez", company: "Solaris SA", email: "rg@solaris.es", plan: "Private Office", status: "Inactivo" },
-  { id: 4, name: "Marta Sánchez", company: "Creative Studio", email: "marta@creative.io", plan: "Premium Desk", status: "Activo" },
-];
+export default async function ClientsPage() {
+  await requireRole(['admin', 'employee']);
+  const clients = await getClients();
 
-export default function ClientsPage() {
   return (
     <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
       <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
@@ -18,7 +15,7 @@ export default function ClientsPage() {
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">Clientes</h2>
           <p className="text-sm md:text-base text-nordic-on-bg/60">Gestiona la base de datos de miembros y empresas.</p>
         </div>
-        <Link href="/clients/new" className="w-full md:w-auto">
+        <Link href="/clients/create" className="w-full md:w-auto">
           <Button className="w-full">
             <UserPlus size={18} className="mr-2" />
             Nuevo Cliente
@@ -43,46 +40,56 @@ export default function ClientsPage() {
         </div>
 
         <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left min-w-[600px]">
-          <thead>
-            <tr className="text-[10px] uppercase tracking-widest text-nordic-on-bg/40 border-b border-nordic-outline-variant/10">
-              <th className="px-6 py-4 font-bold">Nombre</th>
-              <th className="px-6 py-4 font-bold">Empresa</th>
-              <th className="px-6 py-4 font-bold">Estado</th>
-              <th className="px-6 py-4 font-bold text-right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-nordic-outline-variant/5">
-            {clients.map((client) => (
-              <tr key={client.id} className="group hover:bg-nordic-surface-highest/20 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium text-white">{client.name}</span>
-                    <span className="text-xs text-nordic-on-bg/40">{client.email}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-nordic-on-bg/80">{client.company}</span>
-                    <span className="text-[10px] text-nordic-primary/60">{client.plan}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                    client.status === "Activo" ? "bg-green-400/10 text-green-400" : "bg-nordic-outline-variant/20 text-nordic-on-bg/40"
-                  }`}>
-                    {client.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button className="text-nordic-on-bg/40 hover:text-white transition-colors">
-                    <MoreVertical size={18} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          {clients.length === 0 ? (
+            <div className="p-20 text-center space-y-4">
+              <p className="text-nordic-on-bg/40 italic">No se encontraron clientes en la base de datos.</p>
+            </div>
+          ) : (
+            <table className="w-full text-left min-w-[600px]">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-widest text-nordic-on-bg/40 border-b border-nordic-outline-variant/10">
+                  <th className="px-6 py-4 font-bold">Nombre</th>
+                  <th className="px-6 py-4 font-bold">Empresa</th>
+                  <th className="px-6 py-4 font-bold">Teléfono</th>
+                  <th className="px-6 py-4 font-bold">Estado</th>
+                  <th className="px-6 py-4 font-bold text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-nordic-outline-variant/5">
+                {clients.map((client) => (
+                  <tr key={client.id} className="group hover:bg-nordic-surface-highest/20 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-white">
+                          {client.first_name} {client.last_name}
+                        </span>
+                        <span className="text-xs text-nordic-on-bg/40">{client.email}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <span className="text-sm text-nordic-on-bg/80">{client.company}</span>
+                        <span className="text-[10px] text-nordic-primary/60">{client.plan}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs text-nordic-on-bg/60">{client.phone || "—"}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                        client.status === "Activo" ? "bg-green-400/10 text-green-400" : "bg-nordic-outline-variant/20 text-nordic-on-bg/40"
+                      }`}>
+                        {client.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <ClientActions client={client} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </Card>
     </div>

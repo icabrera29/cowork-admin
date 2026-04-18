@@ -24,6 +24,8 @@ const navItems = [
   { name: "Logs", href: "/logs", icon: ClipboardList },
 ];
 
+import { logout } from "@/app/login/actions";
+
 export default function Sidebar() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -117,7 +119,12 @@ export default function Sidebar() {
         </nav>
 
         <div className="p-4 mt-auto border-t border-nordic-outline-variant/10">
-          <button className="flex items-center gap-4 px-4 py-3 w-full text-nordic-on-bg/60 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-all">
+          <button 
+            onClick={async () => {
+              await logout();
+            }}
+            className="flex items-center gap-4 px-4 py-3 w-full text-nordic-on-bg/60 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-all"
+          >
             <LogOut size={20} />
             <span className="text-sm">Cerrar Sesión</span>
           </button>
