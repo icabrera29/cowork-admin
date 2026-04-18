@@ -5,16 +5,23 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { checkRole } from '@/utils/supabase/auth-helpers'
 
-export async function getClients() {
+export async function getClients(query?: string) {
   const { authorized } = await checkRole(['admin', 'employee']);
   if (!authorized) return [];
 
   const supabase = await createSupabaseClient()
   
-  const { data, error } = await supabase
+  let fetchQuery = supabase
     .from('clients')
     .select('*')
     .order('last_name', { ascending: true })
+
+  if (query) {
+    const searchTerm = `%${query}%`
+    fetchQuery = fetchQuery.or(`first_name.ilike.${searchTerm},last_name.ilike.${searchTerm},company.ilike.${searchTerm},email.ilike.${searchTerm}`)
+  }
+
+  const { data, error } = await fetchQuery
 
   if (error) {
     console.error('Error fetching clients:', error)

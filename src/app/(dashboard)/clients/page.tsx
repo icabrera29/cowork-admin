@@ -3,12 +3,18 @@ import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { Search, UserPlus, Filter } from "lucide-react";
 import { getClients } from "./actions";
+import SearchClients from "./_components/SearchClients";
 import ClientActions from "./_components/ClientActions";
 import { requireRole } from "@/utils/supabase/auth-helpers";
 
-export default async function ClientsPage() {
+export default async function ClientsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   await requireRole(['admin', 'employee']);
-  const clients = await getClients();
+  const { q } = await searchParams;
+  const clients = await getClients(q);
 
   return (
     <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
@@ -27,14 +33,7 @@ export default async function ClientsPage() {
 
       <Card variant="low" className="overflow-hidden p-0 border border-nordic-outline-variant/10">
         <div className="p-4 bg-nordic-surface-highest/30 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-nordic-outline-variant/10">
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-nordic-on-bg/40" size={16} />
-            <input 
-              type="text" 
-              placeholder="Buscar por nombre, empresa o email..." 
-              className="w-full bg-nordic-bg/50 text-sm pl-10 pr-4 py-2 rounded-lg border border-nordic-outline-variant/10 focus:outline-none focus:border-nordic-primary/40 transition-all"
-            />
-          </div>
+          <SearchClients />
           <Button variant="secondary" size="sm" className="w-full md:w-auto justify-center">
             <Filter size={14} className="mr-2" />
             Filtros

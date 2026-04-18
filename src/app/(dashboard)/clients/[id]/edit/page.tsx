@@ -6,9 +6,10 @@ import { notFound } from "next/navigation";
 import { requireRole } from "@/utils/supabase/auth-helpers";
 import ClientForm from "../../_components/ClientForm";
 
-export default async function EditClientPage({ params }: { params: { id: string } }) {
+export default async function EditClientPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   await requireRole(['admin', 'employee']);
-  const client = await getClientById(params.id);
+  const client = await getClientById(id);
 
   if (!client) {
     notFound();
@@ -17,7 +18,7 @@ export default async function EditClientPage({ params }: { params: { id: string 
   // Wrapper for updateClient to include the ID
   async function handleUpdate(formData: FormData) {
     "use server";
-    return await updateClient(params.id, formData);
+    return await updateClient(id, formData);
   }
 
   return (

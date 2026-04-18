@@ -5,6 +5,7 @@ import { MoreVertical, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import DeleteClientModal from "./DeleteClientModal";
 import { deleteClient } from "../actions";
+import Portal from "@/components/ui/Portal";
 
 interface ClientActionsProps {
   client: {
@@ -19,17 +20,44 @@ export default function ClientActions({ client }: ClientActionsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
 
-  // Close menu when clicking outside
+  // Update position when opening
+  const toggleMenu = () => {
+    if (!isMenuOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.bottom + window.scrollY,
+        left: rect.right - 208, // 208 is the width of the dropdown (w-52 = 13rem = 208px)
+      });
+    }
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Close menu when clicking outside or scrolling
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node) && 
+          buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    
+    function handleScroll() {
+      setIsMenuOpen(false);
+    }
+
+    if (isMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      window.addEventListener("scroll", handleScroll, true);
+    }
+    
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [isMenuOpen]);
 
   async function handleDelete() {
     setIsDeleting(true);
@@ -45,35 +73,56 @@ export default function ClientActions({ client }: ClientActionsProps) {
   }
 
   return (
-    <div className="relative" ref={menuRef}>
+    <>
       <button 
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        ref={buttonRef}
+        onClick={toggleMenu}
         className={`p-2 rounded-lg transition-all ${isMenuOpen ? "bg-nordic-surface-highest text-white" : "text-nordic-on-bg/40 hover:text-white hover:bg-nordic-surface-highest/50"}`}
       >
         <MoreVertical size={18} />
       </button>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu with Portal */}
       {isMenuOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-nordic-surface-low border border-nordic-outline-variant/10 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-          <Link 
-            href={`/clients/${client.id}/edit`}
-            className="flex items-center gap-3 px-4 py-2 text-sm text-nordic-on-bg/60 hover:text-white hover:bg-nordic-surface-highest/50 transition-colors"
-          >
-            <Edit size={16} />
-            Editar Info
-          </Link>
-          <button 
-            onClick={() => {
-              setIsMenuOpen(false);
-              setIsModalOpen(true);
+        <Portal>
+          <div 
+            ref={menuRef}
+            style={{ 
+              position: 'fixed', 
+              top: `${coords.top - window.scrollY}px`, 
+              left: `${coords.left}px`,
+              zIndex: 9999 
             }}
-            className="flex items-center gap-3 px-4 py-2 w-full text-left text-sm text-red-400/80 hover:text-red-400 hover:bg-red-400/5 transition-colors"
+            className="w-52 bg-nordic-surface-low/80 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] py-2 animate-in fade-in zoom-in-95 slide-in-from-top-4 duration-300"
           >
-            <Trash2 size={16} />
-            Eliminar
-          </button>
-        </div>
+            <div className="px-4 py-2 pb-1 text-[10px] uppercase tracking-widest text-nordic-on-bg/30 font-bold">
+              Acciones
+            </div>
+            <Link 
+              href={`/clients/${client.id}/edit`}
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-nordic-on-bg/70 hover:text-white hover:bg-white/5 transition-all group"
+            >
+              <div className="p-1.5 rounded-lg bg-nordic-primary/10 text-nordic-primary group-hover:bg-nordic-primary group-hover:text-nordic-bg transition-all">
+                <Edit size={14} />
+              </div>
+              <span className="font-medium">Editar Perfil</span>
+            </Link>
+            <div className="mx-2 my-1 border-t border-white/5" />
+            <button 
+              onClick={() => {
+                setIsMenuOpen(false);
+                setIsModalOpen(true);
+              }}
+              className="flex items-center gap-3 px-4 py-2.5 w-full text-left text-sm text-red-400/60 hover:text-red-400 hover:bg-red-400/5 transition-all group"
+            >
+              <div className="p-1.5 rounded-lg bg-red-400/10 text-red-400 group-hover:bg-red-400 group-hover:text-white transition-all">
+                <Trash2 size={14} />
+              </div>
+              <span className="font-medium">Eliminar</span>
+            </button>
+          </div>
+        </Portal>
       )}
 
       {/* Delete Confirmation Modal */}
@@ -84,6 +133,6 @@ export default function ClientActions({ client }: ClientActionsProps) {
         clientName={`${client.first_name} ${client.last_name}`}
         isDeleting={isDeleting}
       />
-    </div>
+    </>
   );
 }

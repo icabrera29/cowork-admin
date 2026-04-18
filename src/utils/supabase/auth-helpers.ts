@@ -24,7 +24,6 @@ export async function requireRole(allowedRoles: UserRole[]) {
 
   if (profileError || !profile || !allowedRoles.includes(profile.role as UserRole)) {
     // If it's a server component, we could redirect to an "unauthorized" page.
-    // For now, let's just redirect to login or dashboard.
     console.error(`Security alert: User ${user.email} attempted unauthorized access.`);
     throw new Error('No autorizado');
   }
