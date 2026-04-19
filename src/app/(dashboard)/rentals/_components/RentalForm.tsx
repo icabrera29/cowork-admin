@@ -29,7 +29,7 @@ interface RentalFormProps {
 }
 
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
-const BLOCKS = [4, 6, 8]
+const BLOCKS = [4, 6, 12]
 
 export default function RentalForm({ offices, clients, initialData, isEditing = false }: RentalFormProps) {
   const router = useRouter()
@@ -75,7 +75,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
 
     const start = new Date(startDate + 'T00:00:00')
     const end = new Date(endDate + 'T00:00:00')
-    
+
     if (start > end) {
       setSummary({ hoursPerCycle: 0, basePrice: 0, finalPrice: 0, officePrice: office.price_per_hour })
       return
@@ -85,7 +85,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
       'Domingo': 0, 'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4, 'Viernes': 5, 'Sábado': 6
     }
     const selectedDayIndices = selectedDays.map(d => dayMap[d])
-    
+
     let occurrences = 0
     let current = new Date(start)
     while (current <= end) {
@@ -116,7 +116,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
   }, [error])
 
   const toggleDay = (day: string) => {
-    setSelectedDays(prev => 
+    setSelectedDays(prev =>
       prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
     )
   }
@@ -149,7 +149,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
     startTransition(async () => {
       const action = isEditing ? updateRental.bind(null, initialData.id) : createRental
       const result = await action(formData)
-      
+
       if (result?.error) {
         setError(result.error)
         if (result.error.includes('Conflicto detectado')) {
@@ -171,7 +171,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
             <p className="text-sm font-medium">{error}</p>
           </div>
         )}
-        
+
         {/* Sección: Cliente y Oficina */}
         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 space-y-6">
           <div className="flex items-center justify-between">
@@ -182,7 +182,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
             {isEditing && (
               <div className="flex items-center gap-2">
                 <label className="text-xs text-white/40 uppercase tracking-widest font-bold">Estado</label>
-                <select 
+                <select
                   value={status}
                   onChange={e => setStatus(e.target.value)}
                   className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider outline-none cursor-pointer transition-colors ${
@@ -195,12 +195,12 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
               </div>
             )}
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm text-white/40">Cliente</label>
-              <select 
-                value={selectedClientId} 
+              <select
+                value={selectedClientId}
                 onChange={e => setSelectedClientId(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
               >
@@ -215,8 +215,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
 
             <div className="space-y-2">
               <label className="text-sm text-white/40">Oficina</label>
-              <select 
-                value={selectedOfficeId} 
+              <select
+                value={selectedOfficeId}
                 onChange={e => setSelectedOfficeId(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
               >
@@ -247,8 +247,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
                   type="button"
                   onClick={() => setBlockHours(b)}
                   className={`flex-1 py-3 rounded-xl border transition-all ${
-                    blockHours === b 
-                      ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' 
+                    blockHours === b
+                      ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20'
                       : 'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'
                   }`}
                 >
@@ -261,8 +261,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm text-white/40">Hora Inicio</label>
-              <input 
-                type="time" 
+              <input
+                type="time"
                 value={startTime}
                 onChange={e => setStartTime(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
@@ -270,8 +270,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
             </div>
             <div className="space-y-2">
               <label className="text-sm text-white/40">Hora Fin (Auto)</label>
-              <input 
-                type="time" 
+              <input
+                type="time"
                 value={endTime}
                 disabled
                 className="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white/40 cursor-not-allowed"
@@ -302,8 +302,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm text-white/40">Inicio Contrato</label>
-              <input 
-                type="date" 
+              <input
+                type="date"
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
@@ -311,8 +311,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
             </div>
             <div className="space-y-2">
               <label className="text-sm text-white/40">Fin Contrato</label>
-              <input 
-                type="date" 
+              <input
+                type="date"
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
@@ -331,8 +331,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm text-white/40">Descuento ($)</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 value={discount}
                 onChange={e => setDiscount(Number(e.target.value))}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
@@ -340,8 +340,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
             </div>
             <div className="space-y-2">
               <label className="text-sm text-white/40">Seña / Adelanto ($)</label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 value={advancement}
                 onChange={e => setAdvancement(Number(e.target.value))}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
@@ -353,9 +353,9 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
       </form>
 
       {/* Modal de Error/Conflicto */}
-      <Modal 
-        isOpen={showErrorModal} 
-        onClose={() => setShowErrorModal(false)} 
+      <Modal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
         title="Conflicto de Disponibilidad"
       >
         <div className="space-y-4">
@@ -370,7 +370,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
               {error}
             </p>
           </div>
-          <Button 
+          <Button
             onClick={() => setShowErrorModal(false)}
             className="w-full bg-white/10 text-white hover:bg-white/20 rounded-xl py-3"
           >
@@ -386,7 +386,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
             <h3 className="text-lg font-semibold mb-1">Resumen del Alquiler</h3>
             <p className="text-white/70 text-xs">Cálculo estimado basado en selección</p>
           </div>
-          
+
           <div className="p-6 space-y-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center text-sm">
@@ -419,8 +419,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
               </p>
             </div>
 
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              onClick={handleSubmit}
               isLoading={isPending}
               className="w-full bg-white text-black hover:bg-white/90 rounded-2xl py-6 font-bold text-lg group"
             >
