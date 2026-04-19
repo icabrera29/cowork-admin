@@ -60,7 +60,8 @@ export default async function RentalsPage({ searchParams }: PageProps) {
                   <th className="px-6 py-4 font-bold">Cliente / Oficina</th>
                   <th className="px-6 py-4 font-bold">Horario y Días</th>
                   <th className="px-6 py-4 font-bold">Vigencia</th>
-                  <th className="px-6 py-4 font-bold">Cobro Estimado</th>
+                  <th className="px-6 py-4 font-bold">Seña</th>
+                  <th className="px-6 py-4 font-bold text-left">Total</th>
                   <th className="px-6 py-4 font-bold">Estado</th>
                   <th className="px-6 py-4 font-bold text-right">Acciones</th>
                 </tr>
@@ -105,6 +106,9 @@ export default async function RentalsPage({ searchParams }: PageProps) {
                         <span className="text-xs text-white/80">{new Date(rental.start_date).toLocaleDateString()}</span>
                         <span className="text-[10px] text-nordic-on-bg/40">al {new Date(rental.end_date).toLocaleDateString()}</span>
                       </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="text-sm font-bold text-emerald-400">${rental.advancement}</span>
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex flex-col">
