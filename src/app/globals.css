@@ -10,6 +10,13 @@
   
   --color-nordic-primary: #adc6ff;
   --color-nordic-outline-variant: #425173;
+
+  --animate-bounce-slow: bounce-slow 4s infinite ease-in-out;
+
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
 }
 
 :root {

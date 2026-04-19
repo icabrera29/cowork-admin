@@ -1,10 +1,14 @@
 import Sidebar from "@/components/layout/Sidebar";
 
-export default function DashboardLayout({
+import { requireRole } from "@/utils/supabase/auth-helpers";
+
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  await requireRole(['admin', 'employee']);
+  
   return (
     <div className="flex min-h-screen">
       <Sidebar />

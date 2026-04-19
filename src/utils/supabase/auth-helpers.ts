@@ -25,9 +25,13 @@ export const requireRole = cache(async function(allowedRoles: UserRole[]) {
     .single();
 
   if (profileError || !profile || !allowedRoles.includes(profile.role as UserRole)) {
-    // If it's a server component, we could redirect to an "unauthorized" page.
+    // If user is a client and not allowed here, send to proximamente
+    if (profile?.role === 'client') {
+      redirect('/proximamente');
+    }
+    
     console.error(`Security alert: User ${user.email} attempted unauthorized access.`);
-    throw new Error('No autorizado');
+    redirect('/login');
   }
 
   return { user, profile };
