@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
@@ -9,28 +9,23 @@ import { login, signup } from "./actions";
 
 export default function LoginPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   async function handleSubmit(formData: FormData) {
-    setLoading(true);
     setError(null);
     setMessage(null);
 
-    const result = mode === "login" ? await login(formData) : await signup(formData);
+    startTransition(async () => {
+      const result = mode === "login" ? await login(formData) : await signup(formData);
 
-    if (result?.error) {
-      setError(result.error);
-      setLoading(false);
-    } else if (result && 'success' in result) {
-      setMessage(result.success);
-      setLoading(false);
-      if (mode === "signup") {
-        // Option to switch back to login after success
-        // setMode("login");
+      if (result?.error) {
+        setError(result.error);
+      } else if (result && 'success' in result) {
+        setMessage(result.success);
       }
-    }
+    });
   }
 
   return (
@@ -127,7 +122,7 @@ export default function LoginPage() {
 
           <Button 
             type="submit"
-            isLoading={loading}
+            isLoading={isPending}
             className="w-full py-4 text-base mt-4 shadow-xl shadow-nordic-primary/20 flex items-center justify-center"
           >
             {mode === "login" ? "Iniciar Sesión" : "Registrarse"}
