@@ -30,7 +30,7 @@ export async function updateSession(request: NextRequest) {
   // refresh session if expired
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser().catch(() => ({ data: { user: null }, error: null }))
 
   // Protect routes here based on `user`.
   // Currently, protecting everything under (dashboard) mapped to root '/'

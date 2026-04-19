@@ -12,7 +12,8 @@ import {
   LogOut,
   Key,
   Menu,
-  X
+  X,
+  Loader2
 } from "lucide-react";
 
 const navItems = [
@@ -39,6 +40,14 @@ export default function Sidebar() {
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    setIsLoggingOut(true);
+    await logout();
+    // We don't set isLoggingOut(false) here because the page will redirect
+  }
 
   return (
     <>
@@ -120,13 +129,18 @@ export default function Sidebar() {
 
         <div className="p-4 mt-auto border-t border-nordic-outline-variant/10">
           <button 
-            onClick={async () => {
-              await logout();
-            }}
-            className="flex items-center gap-4 px-4 py-3 w-full text-nordic-on-bg/60 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-all"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center gap-4 px-4 py-3 w-full text-nordic-on-bg/60 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-all disabled:opacity-50 disabled:pointer-events-none"
           >
-            <LogOut size={20} />
-            <span className="text-sm">Cerrar Sesión</span>
+            {isLoggingOut ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              <LogOut size={20} />
+            )}
+            <span className="text-sm">
+              {isLoggingOut ? "Cerrando Sesión..." : "Cerrar Sesión"}
+            </span>
           </button>
         </div>
       </aside>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { Mail, Lock, UserPlus, ArrowLeft, Loader2 } from "lucide-react";
+import { Mail, Lock, UserPlus, ArrowLeft } from "lucide-react";
 import { login, signup } from "./actions";
 
 export default function LoginPage() {
@@ -127,14 +127,10 @@ export default function LoginPage() {
 
           <Button 
             type="submit"
-            disabled={loading}
+            isLoading={loading}
             className="w-full py-4 text-base mt-4 shadow-xl shadow-nordic-primary/20 flex items-center justify-center"
           >
-            {loading ? (
-              <Loader2 className="animate-spin mr-2" size={20} />
-            ) : (
-              mode === "login" ? "Iniciar Sesión" : "Registrarse"
-            )}
+            {mode === "login" ? "Iniciar Sesión" : "Registrarse"}
           </Button>
         </form>
 
