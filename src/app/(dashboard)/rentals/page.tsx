@@ -117,8 +117,11 @@ export default async function RentalsPage({ searchParams }: PageProps) {
                       </div>
                     </td>
                     <td className="px-6 py-5">
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider ${
-                        rental.status === 'Activo' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                      <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider border ${
+                        rental.status === 'PAGADO' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                        rental.status === 'SEÑADO' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                        rental.status === 'PENDIENTE' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                        'bg-red-500/10 text-red-400 border-red-500/20'
                       }`}>
                         {rental.status}
                       </span>

@@ -45,15 +45,13 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
   const [selectedDays, setSelectedDays] = useState<string[]>(initialData?.days_of_week || [])
   const [startDate, setStartDate] = useState(initialData?.start_date || '')
   const [endDate, setEndDate] = useState(initialData?.end_date || '')
-  const [discount, setDiscount] = useState(initialData?.discount_applied || 0)
+  const [totalPrice, setTotalPrice] = useState(initialData?.final_price_to_charge || 0)
   const [advancement, setAdvancement] = useState(initialData?.advancement || 0)
-  const [status, setStatus] = useState(initialData?.status || 'Activo')
+  const [status, setStatus] = useState(initialData?.status || 'PENDIENTE')
 
   // Derived State (Calculations)
   const [summary, setSummary] = useState({
     hoursPerCycle: 0,
-    basePrice: 0,
-    finalPrice: 0,
     officePrice: 0
   })
 
@@ -69,7 +67,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
   useEffect(() => {
     const office = offices.find(o => o.id === selectedOfficeId)
     if (!office || !startDate || !endDate || selectedDays.length === 0) {
-      setSummary({ hoursPerCycle: 0, basePrice: 0, finalPrice: 0, officePrice: office?.price_per_hour || 0 })
+      setSummary({ hoursPerCycle: 0, officePrice: office?.price_per_hour || 0 })
       return
     }
 
@@ -77,7 +75,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
     const end = new Date(endDate + 'T00:00:00')
 
     if (start > end) {
-      setSummary({ hoursPerCycle: 0, basePrice: 0, finalPrice: 0, officePrice: office.price_per_hour })
+      setSummary({ hoursPerCycle: 0, officePrice: office.price_per_hour })
       return
     }
 
@@ -97,16 +95,12 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
 
     const officePrice = office.price_per_hour
     const totalHours = blockHours * occurrences
-    const basePrice = Math.round(totalHours * officePrice)
-    const finalPrice = Math.max(0, basePrice - discount)
 
     setSummary({
       hoursPerCycle: totalHours,
-      basePrice,
-      finalPrice,
       officePrice
     })
-  }, [selectedOfficeId, blockHours, selectedDays, startDate, endDate, discount, offices])
+  }, [selectedOfficeId, blockHours, selectedDays, startDate, endDate, offices])
 
   // Scroll to top on error
   useEffect(() => {
@@ -140,9 +134,9 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
     formData.append('start_date', startDate)
     formData.append('end_date', endDate)
     formData.append('payment_frequency', 'pago_unico')
-    formData.append('base_price_to_charge', summary.basePrice.toString())
-    formData.append('discount_applied', discount.toString())
-    formData.append('final_price_to_charge', summary.finalPrice.toString())
+    formData.append('base_price_to_charge', totalPrice.toString())
+    formData.append('discount_applied', '0')
+    formData.append('final_price_to_charge', totalPrice.toString())
     formData.append('advancement', advancement.toString())
     formData.append('status', status)
 
@@ -179,21 +173,6 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
               <Users size={18} />
               <h3 className="text-sm font-medium uppercase tracking-wider">Asignación</h3>
             </div>
-            {isEditing && (
-              <div className="flex items-center gap-2">
-                <label className="text-xs text-white/40 uppercase tracking-widest font-bold">Estado</label>
-                <select
-                  value={status}
-                  onChange={e => setStatus(e.target.value)}
-                  className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider outline-none cursor-pointer transition-colors ${
-                    status === 'Activo' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                  }`}
-                >
-                  <option value="Activo" className="bg-zinc-900">Activo</option>
-                  <option value="Inactivo" className="bg-zinc-900">Inactivo</option>
-                </select>
-              </div>
-            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -325,17 +304,18 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 space-y-6">
           <div className="flex items-center gap-2 text-white/60 mb-2">
             <DollarSign size={18} />
-            <h3 className="text-sm font-medium uppercase tracking-wider">Facturación</h3>
+            <h3 className="text-sm font-medium uppercase tracking-wider">Facturación y Estado</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-sm text-white/40">Descuento ($)</label>
+              <label className="text-sm text-white/40">Monto a Pagar ($)</label>
               <input
                 type="number"
-                value={discount}
-                onChange={e => setDiscount(Number(e.target.value))}
+                value={totalPrice}
+                onChange={e => setTotalPrice(Number(e.target.value))}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
+                placeholder="Ej. 150000"
               />
             </div>
             <div className="space-y-2">
@@ -345,7 +325,21 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
                 value={advancement}
                 onChange={e => setAdvancement(Number(e.target.value))}
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none"
+                placeholder="Ej. 50000"
               />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-white/40">Estado del Pago</label>
+              <select
+                value={status}
+                onChange={e => setStatus(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
+              >
+                <option value="PENDIENTE" className="bg-zinc-900">Pendiente</option>
+                <option value="SEÑADO" className="bg-zinc-900">Señado</option>
+                <option value="PAGADO" className="bg-zinc-900">Pagado</option>
+                <option value="CANCELADO" className="bg-zinc-900">Cancelado</option>
+              </select>
             </div>
           </div>
         </div>
@@ -394,16 +388,8 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
                 <span className="text-white font-medium">{summary.hoursPerCycle} hrs</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-white/40">Precio oficina (hr)</span>
-                <span className="text-white font-medium">${summary.officePrice}</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-white/40">Subtotal base</span>
-                <span className="text-white font-medium">${summary.basePrice}</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-white/40 font-semibold text-emerald-400">Total con descuento</span>
-                <span className="text-white font-bold text-lg">${summary.finalPrice}</span>
+                <span className="text-white/40 font-semibold text-blue-400">Monto Total a Pagar</span>
+                <span className="text-white font-bold text-lg">${totalPrice}</span>
               </div>
             </div>
 
@@ -415,7 +401,7 @@ export default function RentalForm({ offices, clients, initialData, isEditing = 
                 <span className="text-emerald-400 font-bold text-xl">${advancement}</span>
               </div>
               <p className="text-[10px] text-white/30 italic">
-                * El saldo restante de ${summary.finalPrice - advancement} deberá ser abonado según lo acordado.
+                * El saldo restante de ${totalPrice - advancement} deberá ser abonado según lo acordado.
               </p>
             </div>
 

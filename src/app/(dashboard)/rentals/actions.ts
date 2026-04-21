@@ -88,7 +88,7 @@ export async function createRental(formData: FormData) {
     .from('rentals')
     .select('*')
     .eq('office_id', officeId)
-    .eq('status', 'Activo')
+    .neq('status', 'CANCELADO')
 
   if (fetchError) {
     return { error: "Error al validar disponibilidad: " + fetchError.message }
@@ -139,7 +139,7 @@ export async function createRental(formData: FormData) {
       discount_applied: discountApplied,
       final_price_to_charge: finalPriceToCharge,
       advancement: advancement,
-      status: 'Activo'
+      status: formData.get('status') as string || 'PENDIENTE'
     }])
 
   if (insertError) {
@@ -169,14 +169,14 @@ export async function updateRental(id: string, formData: FormData) {
   const discountApplied = parseFloat(formData.get('discount_applied') as string) || 0
   const finalPriceToCharge = parseFloat(formData.get('final_price_to_charge') as string)
   const advancement = parseFloat(formData.get('advancement') as string) || 0
-  const status = formData.get('status') as string || 'Activo'
+  const status = formData.get('status') as string || 'PENDIENTE'
 
   // VALIDACIÓN DE SOLAPAMIENTO (Excluyendo el alquiler actual)
   const { data: existingRentals, error: fetchError } = await supabase
     .from('rentals')
     .select('*')
     .eq('office_id', officeId)
-    .eq('status', 'Activo')
+    .neq('status', 'CANCELADO')
     .neq('id', id) // CLAVE: Excluir el alquiler actual
 
   if (fetchError) {
